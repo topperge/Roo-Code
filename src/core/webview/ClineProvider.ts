@@ -2648,14 +2648,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 		if (stateValues.apiProvider) {
 			apiProvider = stateValues.apiProvider
 		} else {
-			// Either new user or legacy user that doesn't have the apiProvider stored in state
-			// (If they're using OpenRouter or Bedrock, then apiProvider state will exist)
-			if (secretValues.apiKey) {
-				apiProvider = "anthropic"
-			} else {
-				// New users should default to openrouter
-				apiProvider = "openrouter"
-			}
+			apiProvider = "anthropic"
 		}
 
 		// Build the apiConfiguration object combining state values and secrets
