@@ -2315,6 +2315,28 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 		// await this.postMessageToWebview({ type: "action", action: "settingsButtonClicked" }) // bad ux if user is on welcome
 	}
 
+	// Requesty
+
+	async handleRequestyCallback(code: string) {
+		const apiKey = code
+		const requesty: ApiProvider = "requesty"
+		await this.contextProxy.setValues({
+			apiProvider: requesty,
+			requestyApiKey: apiKey,
+		})
+		await this.postStateToWebview()
+		if (this.getCurrentCline()) {
+			this.getCurrentCline()!.api = buildApiHandler({
+				apiProvider: requesty,
+				requestyApiKey: apiKey,
+			})
+		}
+
+		// TODO: Tell user that everything is ready and they can start their first task.
+		// await this.postMessageToWebview({ type: "action", action: "settingsButtonClicked" })
+		// bad ux if user is on welcome
+	}
+
 	// Task history
 
 	async getTaskWithId(id: string): Promise<{
