@@ -7,9 +7,10 @@ import ApiOptions from "../settings/ApiOptions"
 import { Tab, TabContent } from "../common/Tab"
 import { useAppTranslation } from "../../i18n/TranslationContext"
 import { getRequestyAuthUrl, getOpenRouterAuthUrl } from "../../oauth/urls"
+import knuthShuffle from "knuth-shuffle-seeded"
 
 const WelcomeView = () => {
-	const { apiConfiguration, currentApiConfigName, setApiConfiguration, uriScheme } = useExtensionState()
+	const { apiConfiguration, currentApiConfigName, setApiConfiguration, uriScheme, machineId } = useExtensionState()
 	const { t } = useAppTranslation()
 	const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined)
 
@@ -42,46 +43,56 @@ const WelcomeView = () => {
 					<h4 className="mt-3 mb-2">{t("welcome:startRouter")}</h4>
 
 					<div className="flex gap-4">
-						<a
-							href={getRequestyAuthUrl(uriScheme)}
-							className="flex-1 border border-vscode-panel-border rounded p-4 flex flex-col items-center cursor-pointer transition-all hover:bg-vscode-button-hoverBackground hover:border-vscode-button-border no-underline text-inherit"
-							target="_blank"
-							rel="noopener noreferrer">
-							<div className="w-16 h-16 flex items-center justify-center rounded mb-2 overflow-hidden bg-white relative">
-								<img
-									src={`${imagesBaseUri}/requesty.png`}
-									alt="Requesty"
-									className="w-full h-full object-contain p-2"
-								/>
-							</div>
-							<div className="text-center">
-								<div className="font-bold">Requesty</div>
-								<div className="text-sm text-vscode-descriptionForeground">
-									{t("welcome:requestyDescription")}
-								</div>
+						{/* Define the providers */}
+						{(() => {
+							// Provider card configuration
+							const providers = [
+								{
+									name: "Requesty",
+									description: t("welcome:requestyDescription"),
+									imgSrc: `${imagesBaseUri}/requesty.png`,
+									authUrl: getRequestyAuthUrl(uriScheme),
+									incentive: "$1 free credit",
+								},
+								{
+									name: "OpenRouter",
+									description: t("welcome:openRouterDescription"),
+									imgSrc: `${imagesBaseUri}/openrouter.png`,
+									authUrl: getOpenRouterAuthUrl(uriScheme),
+								},
+							]
 
-								<div className="text-sm font-bold">$1 free credit</div>
-							</div>
-						</a>
-						<a
-							href={getOpenRouterAuthUrl(uriScheme)}
-							className="flex-1 border border-vscode-panel-border rounded p-4 flex flex-col items-center cursor-pointer transition-all hover:bg-vscode-button-hoverBackground hover:border-vscode-button-border no-underline text-inherit"
-							target="_blank"
-							rel="noopener noreferrer">
-							<div className="w-16 h-16 flex items-center justify-center rounded mb-2 overflow-hidden bg-white relative">
-								<img
-									src={`${imagesBaseUri}/openrouter.png`}
-									alt="OpenRouter"
-									className="w-full h-full object-contain p-2"
-								/>
-							</div>
-							<div className="text-center">
-								<div className="font-bold">OpenRouter</div>
-								<div className="text-sm text-vscode-descriptionForeground">
-									{t("welcome:openRouterDescription")}
-								</div>
-							</div>
-						</a>
+							// Shuffle providers based on machine ID (will be consistent for the same machine)
+							const orderedProviders = [...providers]
+							knuthShuffle(orderedProviders, (machineId as any) || Date.now())
+
+							// Render the provider cards
+							return orderedProviders.map((provider, index) => (
+								<a
+									key={index}
+									href={provider.authUrl}
+									className="flex-1 border border-vscode-panel-border rounded p-4 flex flex-col items-center cursor-pointer transition-all hover:bg-vscode-button-hoverBackground hover:border-vscode-button-border no-underline text-inherit"
+									target="_blank"
+									rel="noopener noreferrer">
+									<div className="w-16 h-16 flex items-center justify-center rounded mb-2 overflow-hidden bg-white relative">
+										<img
+											src={provider.imgSrc}
+											alt={provider.name}
+											className="w-full h-full object-contain p-2"
+										/>
+									</div>
+									<div className="text-center">
+										<div className="font-bold">{provider.name}</div>
+										<div className="text-sm text-vscode-descriptionForeground">
+											{provider.description}
+										</div>
+										{provider.incentive && (
+											<div className="text-sm font-bold">{provider.incentive}</div>
+										)}
+									</div>
+								</a>
+							))
+						})()}
 					</div>
 
 					<div className="text-center my-4">or</div>
