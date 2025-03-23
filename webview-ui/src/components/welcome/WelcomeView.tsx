@@ -1,6 +1,5 @@
 import { useCallback, useState } from "react"
 import { VSCodeButton } from "@vscode/webview-ui-toolkit/react"
-import { VSCodeButtonLink } from "../common/VSCodeButtonLink"
 import { useExtensionState } from "../../context/ExtensionStateContext"
 import { validateApiConfiguration } from "../../utils/validate"
 import { vscode } from "../../utils/vscode"
@@ -26,6 +25,12 @@ const WelcomeView = () => {
 		vscode.postMessage({ type: "upsertApiConfiguration", text: currentApiConfigName, apiConfiguration })
 	}, [apiConfiguration, currentApiConfigName])
 
+	// Using a lazy initializer so it reads once at mount
+	const [imagesBaseUri] = useState(() => {
+		const w = window as any
+		return w.IMAGES_BASE_URI || ""
+	})
+
 	return (
 		<Tab>
 			<TabContent className="flex flex-col gap-5">
@@ -37,34 +42,46 @@ const WelcomeView = () => {
 					<h4 className="mt-3 mb-2">{t("welcome:startRouter")}</h4>
 
 					<div className="flex gap-4">
-						<div className="flex-1 border border-vscode-panel-border rounded p-4 flex flex-col items-center">
-							<VSCodeButtonLink
-								href={getRequestyAuthUrl(uriScheme)}
-								className="bg-blue-500 text-white w-16 h-16 flex items-center justify-center rounded mb-2 text-xl font-bold no-underline">
-								REQ
-							</VSCodeButtonLink>
+						<a
+							href={getRequestyAuthUrl(uriScheme)}
+							className="flex-1 border border-vscode-panel-border rounded p-4 flex flex-col items-center cursor-pointer transition-all hover:bg-vscode-button-hoverBackground hover:border-vscode-button-border no-underline text-inherit"
+							target="_blank"
+							rel="noopener noreferrer">
+							<div className="w-16 h-16 flex items-center justify-center rounded mb-2 overflow-hidden bg-white relative">
+								<img
+									src={`${imagesBaseUri}/requesty.png`}
+									alt="Requesty"
+									className="w-full h-full object-contain p-2"
+								/>
+							</div>
 							<div className="text-center">
 								<div className="font-bold">Requesty</div>
 								<div className="text-sm text-vscode-descriptionForeground">
 									{t("welcome:requestyDescription")}
 								</div>
 
-								<div className="text-sm text-blue-400 font-bold">$1 free credit</div>
+								<div className="text-sm font-bold">$1 free credit</div>
 							</div>
-						</div>
-						<div className="flex-1 border border-vscode-panel-border rounded p-4 flex flex-col items-center">
-							<VSCodeButtonLink
-								href={getOpenRouterAuthUrl(uriScheme)}
-								className="bg-blue-500 text-white w-16 h-16 flex items-center justify-center rounded mb-2 text-xl font-bold no-underline">
-								OR
-							</VSCodeButtonLink>
+						</a>
+						<a
+							href={getOpenRouterAuthUrl(uriScheme)}
+							className="flex-1 border border-vscode-panel-border rounded p-4 flex flex-col items-center cursor-pointer transition-all hover:bg-vscode-button-hoverBackground hover:border-vscode-button-border no-underline text-inherit"
+							target="_blank"
+							rel="noopener noreferrer">
+							<div className="w-16 h-16 flex items-center justify-center rounded mb-2 overflow-hidden bg-white relative">
+								<img
+									src={`${imagesBaseUri}/openrouter.png`}
+									alt="OpenRouter"
+									className="w-full h-full object-contain p-2"
+								/>
+							</div>
 							<div className="text-center">
 								<div className="font-bold">OpenRouter</div>
 								<div className="text-sm text-vscode-descriptionForeground">
 									{t("welcome:openRouterDescription")}
 								</div>
 							</div>
-						</div>
+						</a>
 					</div>
 
 					<div className="text-center my-4">or</div>

@@ -604,6 +604,8 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			"codicon.css",
 		])
 
+		const imagesUri = getUri(webview, this.contextProxy.extensionUri, ["assets", "images"])
+
 		const file = "src/index.tsx"
 		const scriptUri = `http://${localServerUrl}/${file}`
 
@@ -622,7 +624,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			`font-src ${webview.cspSource}`,
 			`style-src ${webview.cspSource} 'unsafe-inline' https://* http://${localServerUrl} http://0.0.0.0:${localPort}`,
 			`img-src ${webview.cspSource} data:`,
-			`script-src 'unsafe-eval' https://* https://*.posthog.com http://${localServerUrl} http://0.0.0.0:${localPort} 'nonce-${nonce}'`,
+			`script-src 'unsafe-eval' ${webview.cspSource} https://* https://*.posthog.com http://${localServerUrl} http://0.0.0.0:${localPort} 'nonce-${nonce}'`,
 			`connect-src https://* https://*.posthog.com ws://${localServerUrl} ws://0.0.0.0:${localPort} http://${localServerUrl} http://0.0.0.0:${localPort}`,
 		]
 
@@ -635,6 +637,9 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 					<meta http-equiv="Content-Security-Policy" content="${csp.join("; ")}">
 					<link rel="stylesheet" type="text/css" href="${stylesUri}">
 					<link href="${codiconsUri}" rel="stylesheet" />
+					<script nonce="${nonce}">
+						window.IMAGES_BASE_URI = "${imagesUri}"
+					</script>
 					<title>Roo Code</title>
 				</head>
 				<body>
@@ -683,6 +688,8 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			"codicon.css",
 		])
 
+		const imagesUri = getUri(webview, this.contextProxy.extensionUri, ["assets", "images"])
+
 		// const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, "assets", "main.js"))
 
 		// const styleResetUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, "assets", "reset.css"))
@@ -715,6 +722,9 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
             <meta http-equiv="Content-Security-Policy" content="default-src 'none'; font-src ${webview.cspSource}; style-src ${webview.cspSource} 'unsafe-inline'; img-src ${webview.cspSource} data:; script-src 'nonce-${nonce}' https://us-assets.i.posthog.com; connect-src https://openrouter.ai https://us.i.posthog.com https://us-assets.i.posthog.com;">
             <link rel="stylesheet" type="text/css" href="${stylesUri}">
 			<link href="${codiconsUri}" rel="stylesheet" />
+			<script nonce="${nonce}">
+				window.IMAGES_BASE_URI = "${imagesUri}"
+			</script>
             <title>Roo Code</title>
           </head>
           <body>
