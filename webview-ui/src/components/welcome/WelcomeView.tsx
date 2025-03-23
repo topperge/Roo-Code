@@ -48,16 +48,16 @@ const WelcomeView = () => {
 							// Provider card configuration
 							const providers = [
 								{
+									slug: "requesty",
 									name: "Requesty",
-									description: t("welcome:requestyDescription"),
-									imgSrc: `${imagesBaseUri}/requesty.png`,
+									description: t("welcome:routers.requesty.description"),
+									incentive: t("welcome:routers.requesty.incentive"),
 									authUrl: getRequestyAuthUrl(uriScheme),
-									incentive: "$1 free credit",
 								},
 								{
+									slug: "openrouter",
 									name: "OpenRouter",
-									description: t("welcome:openRouterDescription"),
-									imgSrc: `${imagesBaseUri}/openrouter.png`,
+									description: t("welcome:routers.openrouter.description"),
 									authUrl: getOpenRouterAuthUrl(uriScheme),
 								},
 							]
@@ -76,7 +76,7 @@ const WelcomeView = () => {
 									rel="noopener noreferrer">
 									<div className="w-16 h-16 flex items-center justify-center rounded mb-2 overflow-hidden bg-white relative">
 										<img
-											src={provider.imgSrc}
+											src={`${imagesBaseUri}/${provider.slug}.png`}
 											alt={provider.name}
 											className="w-full h-full object-contain p-2"
 										/>
@@ -95,7 +95,7 @@ const WelcomeView = () => {
 						})()}
 					</div>
 
-					<div className="text-center my-4">or</div>
+					<div className="text-center my-4">{t("welcome:or")}</div>
 					<h4 className="mt-3 mb-2">{t("welcome:startCustom")}</h4>
 					<ApiOptions
 						fromWelcomeView
